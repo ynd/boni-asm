@@ -30,6 +30,7 @@ Boni makes it easy to add support for more architectures.
 
 Usage:
 python %s yourfile.s
+python %s examples/example1.s
 
 Options:
 -o some_file                        Output the compiled code to some_file

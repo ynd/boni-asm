@@ -12,8 +12,8 @@ So the compiler is easily retargetable.
 """
 
 
-# Decompopes an instructions into multiple named parts
-# Format: ('name', length)
+# Decompopes an instructions into multiple named sections
+# Format: ('name', size)
 INSTRUCTION_FORMAT = (
     ('OP', 4),
     ('OP1', 4),
