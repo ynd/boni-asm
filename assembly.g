@@ -10,7 +10,7 @@ parser Assembly:
     token END:    r'$'
     
     rule line: instruction END    {{ return instruction }}
-             | TAGDEF END         {{ return ('TAGDEF', TAGDEF) }}
+             | TAGDEF END         {{ return ('TAGDEF', TAGDEF[:len(TAGDEF)-1]) }}
              | END                {{ return [] }}
 
     rule instruction: OP                    {{ result = [] }}
@@ -22,4 +22,4 @@ parser Assembly:
     rule operand: NUM          {{ return ('NUM', eval(NUM[1:])) }}
                 | ADR          {{ return ('ADR', eval(ADR)) }}
                 | TAG          {{ return ('TAG', TAG) }}
-                | REG          {{ return ('REG', REG) }}
+                | REG          {{ return ('REG', REG[1:]) }}

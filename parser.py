@@ -28,7 +28,7 @@ class Assembly(Parser):
         elif _token_ == 'TAGDEF':
             TAGDEF = self._scan('TAGDEF')
             END = self._scan('END')
-            return ('TAGDEF', TAGDEF)
+            return ('TAGDEF', TAGDEF[:len(TAGDEF)-1])
         else:# == 'END'
             END = self._scan('END')
             return []
@@ -56,7 +56,7 @@ class Assembly(Parser):
             return ('TAG', TAG)
         else:# == 'REG'
             REG = self._scan('REG')
-            return ('REG', REG)
+            return ('REG', REG[1:])
 
 
 def parse(rule, text):
