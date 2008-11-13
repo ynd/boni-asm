@@ -42,18 +42,22 @@ REGISTERS = (
 )
 
 # List and Format of available instructions
-INSTRUCTIONS = (
-    ('ADD', ('OP', 0x0), ('OP1', 'REG'), ('OP2', 'REG'), ('OP3', 'REG')),
-    ('SUB', ('OP', 0x1), ('OP1', 'REG'), ('OP2', 'REG'), ('OP3', 'REG')),
-    ('SHR', ('OP', 0x2), ('OP1', 'REG'), ('OP2', 'REG')),
-    ('SHL', ('OP', 0x3), ('OP1', 'REG'), ('OP2', 'REG')),
-    ('NOT', ('OP', 0x4), ('OP1', 'REG'), ('OP2', 'REG')),
-    ('AND', ('OP', 0x5), ('OP1', 'REG'), ('OP2', 'REG'), ('OP3', 'REG')),
-    ('OR', ('OP', 0x6), ('OP1', 'REG'), ('OP2', 'REG'), ('OP3', 'REG')),
-    ('MOV', ('OP', 0x7), ('OP1', 'REG'), ('OP2', 'REG')),
-    ('MOV', ('OP', 0x8), ('OP1', 'REG'), (('OP2', 'OP1'), 'ADR')),
-    ('MOV', ('OP', 0x9), (('OP2', 'OP1'), 'ADR'), ('OP1', 'REG')),
-    ('MOV', ('OP', 0xA), ('OP1', 'REG'), (('OP2', 'OP1'), 'NUM')),
-    ('JMP', (('OP', 'OP1'), 0xC0), ('OP2', 'ADR')),
-    ('STOP', ('OP', 0xF)),
-)
+INSTRUCTIONS = {
+    ('ADD', 'REG', 'REG', 'REG') : (('OP', 0x0), 'OP1', 'OP2', 'OP3'),
+    ('SUB', 'REG', 'REG', 'REG') : (('OP', 0x1), 'OP1', 'OP2', 'OP3'),
+    ('SHR', 'REG', 'REG', 'REG') : (('OP', 0x2), 'OP1', 'OP2', 'OP3'),
+    ('SHL', 'REG', 'REG', 'REG') : (('OP', 0x3), 'OP1', 'OP2', 'OP3'),
+    ('NOT', 'REG', 'REG') : (('OP', 0x4), 'OP1', 'OP2'),
+    ('AND', 'REG', 'REG', 'REG') : (('OP', 0x5), 'OP1', 'OP2', 'OP3'),
+    ('OR', 'REG', 'REG', 'REG') : (('OP', 0x6), 'OP1', 'OP2', 'OP3'),
+    ('MOV', 'REG', 'REG') : (('OP', 0x7), 'OP1', 'OP2'),
+    ('MOV', 'REG', 'ADR') : (('OP', 0x8), 'OP1', ('OP2', 'OP3')),
+    ('MOV', 'ADR', 'REG') : (('OP', 0x9), ('OP2', 'OP3'), 'OP1'),
+    ('MOV', 'REG', 'NUM') : (('OP', 0xA), 'OP1', ('OP2', 'OP3')),
+    ('JMP', 'ADR') : ((('OP', 'OP1'), 0xC0), ('OP2', 'OP3')),
+    ('JZ', 'ADR') : ((('OP', 'OP1'), 0xC1), ('OP2', 'OP3')),
+    ('JNZ', 'ADR') : ((('OP', 'OP1'), 0xC2), ('OP2', 'OP3')),
+    ('JNEG', 'ADR') : ((('OP', 'OP1'), 0xC3), ('OP2', 'OP3')),
+    ('JPOS', 'ADR') : ((('OP', 'OP1'), 0xC4), ('OP2', 'OP3')),
+    ('STOP',) : (('OP', 0xF),),
+}
