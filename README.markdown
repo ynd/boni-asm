@@ -19,12 +19,12 @@ It only supports one architecture for now. A general purpose micro-processor mad
 
 I hope someone can build from this.
 
-Usage:
+**Usage:**
 
 `python assembler.py yourfile.s`
 
 `python assembler.py examples/example1.s`
 
-Options:
+**Options:**
 
 `-b                                  Output in binary`
