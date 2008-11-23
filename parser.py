@@ -26,9 +26,13 @@ class Assembly(Parser):
             END = self._scan('END')
             return instruction
         elif _token_ == 'TAGDEF':
+            instruction = None
             TAGDEF = self._scan('TAGDEF')
+            if self._peek('END', 'OP') == 'OP':
+                instruction = self.instruction()
             END = self._scan('END')
-            return ('TAGDEF', TAGDEF[:len(TAGDEF)-1])
+            t = ('TAGDEF', TAGDEF[:len(TAGDEF)-1])
+            return list(t, instruction) if instruction else t
         else:# == 'END'
             END = self._scan('END')
             return []

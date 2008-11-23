@@ -9,9 +9,11 @@ parser Assembly:
     token TAGDEF: r'[a-zA-Z0-9_]+:'
     token END:    r'$'
     
-    rule line: instruction END    {{ return instruction }}
-             | TAGDEF END         {{ return ('TAGDEF', TAGDEF[:len(TAGDEF)-1]) }}
-             | END                {{ return [] }}
+    rule line: instruction END          {{ return instruction }}
+             |                          {{ instruction = None }}
+               TAGDEF [instruction] END {{ t = ('TAGDEF', TAGDEF[:len(TAGDEF)-1]) }}
+                                        {{ return list(t, instruction) if instruction else t }}
+             | END                      {{ return [] }}
 
     rule instruction: OP                    {{ result = [] }}
                          (                   

@@ -1,0 +1,22 @@
+88888888ba     ,ad8888ba,    888b      88  88  
+88      "8b   d8"'    `"8b   8888b     88  88  
+88      ,8P  d8'        `8b  88 `8b    88  88  
+88aaaaaa8P'  88          88  88  `8b   88  88  
+88""""""8b,  88          88  88   `8b  88  88  
+88      `8b  Y8,        ,8P  88    `8b 88  88  
+88      a8P   Y8a.    .a8P   88     `8888  88  
+88888888P"     `"Y8888Y"'    88      `888  88  
+Created by Yann N. Dauphin on 2008-11-11.
+Copyright (c) 2008 Lambda Tree Media. All rights reserved.
+
+Boni is a retargetable assembler that can compile Turing Complete Assembly.
+Boni was originally created for the machine defined in the fifth TP of the course INF3500.
+Boni makes it easy to add support for more architectures.
+
+Usage:
+python assembler.py yourfile.s
+python assembler.py examples/example1.s
+
+Options:
+-o some_file                        Output the compiled code to some_file
+-b                                  Output in binary

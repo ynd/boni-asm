@@ -29,7 +29,6 @@ Boni was originally created for the machine defined in the fifth TP of the cours
 Boni makes it easy to add support for more architectures.
 
 Usage:
-python %s yourfile.s
 python %s examples/example1.s
 
 Options:
@@ -59,9 +58,13 @@ class Assembler(object):
         for line in open(input_file):
             try:
                 result = parser.parse('line', line)
-                if result:
+                if type(result) is list:
+                    for e in result:
+                        tree.append(e)
+                elif result:
                     tree.append(result)
             except UnboundLocalError, e:
+                print >> sys.stderr, 'A syntax error was found.'
                 exit(-1)
         return tree
 
@@ -117,7 +120,10 @@ class MachineCodeGenerator(object):
         try:
             return architecture.INSTRUCTIONS[inst_type]
         except KeyError, e: 
-            raise e
+            print >> sys.stderr, 'This type of instruction is not supported:', inst_type
+            print >> sys.stderr, 'You wrote:', instruction[1:]
+            print >> sys.stderr, 'Please consult architecture.py for a list of supported instructions.'
+            exit(-1)
     
     def get_section_values_for(self, inst, encoding, tags=None):
         tags = tags or {}
