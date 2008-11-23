@@ -22,6 +22,7 @@ I hope someone can build from this.
 Usage:
 
 `python assembler.py yourfile.s
+
 python assembler.py examples/example1.s`
 
 Options:
