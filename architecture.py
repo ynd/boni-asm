@@ -59,5 +59,7 @@ INSTRUCTIONS = {
     ('JNZ', 'ADR') : ((('OP', 'OP1'), 0xC2), ('OP2', 'OP3')),
     ('JNEG', 'ADR') : ((('OP', 'OP1'), 0xC3), ('OP2', 'OP3')),
     ('JPOS', 'ADR') : ((('OP', 'OP1'), 0xC4), ('OP2', 'OP3')),
+    ('LDX', 'REG') : (('OP', 0xB), 'OP1'),
+    ('STX', 'REG') : (('OP', 0xD), 'OP1'),
     ('STOP',) : (('OP', 0xF),),
 }
