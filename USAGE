@@ -18,5 +18,5 @@ python assembler.py yourfile.s
 python assembler.py examples/example1.s
 
 Options:
--o some_file                        Output the compiled code to some_file
 -b                                  Output in binary
+--mode=vhdl                         Output VHDL code

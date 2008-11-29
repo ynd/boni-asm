@@ -28,3 +28,5 @@ I hope someone can build from this.
 **Options:**
 
 `-b                                  Output in binary`
+
+`--mode=vhdl                         Output VHDL code`

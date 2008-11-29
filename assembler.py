@@ -12,50 +12,39 @@ import getopt
 import parser
 import architecture
 
-help_message = '''
-88888888ba     ,ad8888ba,    888b      88  88  
-88      "8b   d8"'    `"8b   8888b     88  88  
-88      ,8P  d8'        `8b  88 `8b    88  88  
-88aaaaaa8P'  88          88  88  `8b   88  88  
-88""""""8b,  88          88  88   `8b  88  88  
-88      `8b  Y8,        ,8P  88    `8b 88  88  
-88      a8P   Y8a.    .a8P   88     `8888  88  
-88888888P"     `"Y8888Y"'    88      `888  88  
-Created by Yann N. Dauphin on 2008-11-11.
-Copyright (c) 2008 Lambda Tree Media. All rights reserved.
-
-Boni is a retargetable assembler that can compile Turing Complete Assembly.
-Boni was originally created for the machine defined in the fifth TP of the course INF3500.
-Boni makes it easy to add support for more architectures.
-
-Usage:
-python %s examples/example1.s
-
-Options:
--o some_file                        Output the compiled code to some_file
--b                                  Output in binary
-''' % __file__
-
 
 class Assembler(object):
     def __init__(self):
         self.codegen = MachineCodeGenerator()
     
-    def assemble(self, input_file, output_binary=False):
-        tree = self.parse_program(input_file)
+    def assemble(self, input_file, mode='HEX'):
+        f = open(input_file).read()
+        tree = self.parse_program(f)
         tags = self.find_tags(tree)
-    
+        if mode == 'VHDL':
+            program = []
+            
         for inst in tree:
             if inst[0] == 'OP':
                 machine_code = self.codegen.generate_for(inst, tags)
-                if output_binary:
+                if mode == 'BIN':
                     print machine_code
+                elif mode == 'VHDL':
+                    program.extend(self.codegen.split_machine_code(machine_code))
+                elif mode == 'COMMENT':
+                    print hex(int(machine_code, 2)).ljust(32, ' '), '#', inst
                 else:
                     print hex(int(machine_code, 2))
+        
+        if mode == 'VHDL':
+            print '(',
+            for word in program:
+                print 'x"%s",' % hex(int(word, 2))[2:].rjust(self.codegen.get_instruction_size()/4,"0"),
+            print "others => (others => '1') )"
     
-    def parse_program(self, input_file):
+    def parse_program(self, input):
         tree = []
-        for line in open(input_file):
+        for line in input.splitlines():
             try:
                 result = parser.parse('line', line)
                 if type(result) is list:
@@ -69,12 +58,19 @@ class Assembler(object):
         return tree
 
     def find_tags(self, tree):
-        tags, i = {}, 0
+        # Initialize dict
+        tags = {}
         for e in tree:
             if e[0] == 'TAGDEF':
-                tags[e[1]] = i
-            else:
-                i += 1
+                tags[e[1]] = 0
+        # Find correspondence
+        i = 0
+        for inst in tree:
+            if inst[0] == 'TAGDEF':
+                tags[inst[1]] = i
+            elif inst[0] == 'OP':
+                machine_code = self.codegen.generate_for(inst, tags)
+                i += len(machine_code) / self.codegen.get_instruction_size()
         return tags
 
 
@@ -154,6 +150,9 @@ class MachineCodeGenerator(object):
         else:
             return sections[section]
     
+    def get_instruction_size(self):
+        return reduce(lambda tot, t: t[1] + tot, architecture.INSTRUCTION_FORMAT, 0)
+    
     def int2bin(self, n, size):
         return "".join([str((n>>y) & 1) for y in range(size-1, -1, -1)])
     
@@ -164,6 +163,13 @@ class MachineCodeGenerator(object):
             part = bin_val[i:i+self.get_size_of(section)]
             r.append((section, part)) 
             i += self.get_size_of(section)
+        return r
+    
+    def split_machine_code(self, machine_code):
+        r = []
+        instruction_size = self.get_instruction_size()
+        for part in range(0, len(machine_code), instruction_size):
+            r.append(machine_code[part:part+instruction_size])
         return r
 
 
@@ -177,26 +183,29 @@ def main(argv=None):
         argv = sys.argv
     try:
         try:
-            opts, args = getopt.getopt(argv[1:], "ho:vb", ["help", "output=", "binary"])
+            opts, args = getopt.getopt(argv[1:], "ho:vbm", ["help", "output=", "binary", "mode="])
         except getopt.error, msg:
             raise Usage(msg)
     
         # option processing
-        verbose, output_binary = False, False
+        verbose, mode = False, 'HEX'
         for option, value in opts:
             if option == "-v":
                 verbose = True
             if option in ("-h", "--help"):
-                raise Usage(help_message)
+                raise Usage(open("USAGE").read())
             if option in ("-o", "--output"):
                 output = value
             if option in ("-b", "--binary"):
-                output_binary = True
+                mode = 'BIN'
+            if option in ("-m", "--mode"):
+                mode = value.upper()
         
-        Assembler().assemble(args[0], output_binary)
+        Assembler().assemble(args[0], mode)
     
     except Usage, err:
-        print >> sys.stderr, sys.argv[0].split("/")[-1] + ": " + str(err.msg)
+        print >> sys.stderr, sys.argv[0].split("/")[-1] + ": "
+        print str(err.msg)
         return 2
 
 
